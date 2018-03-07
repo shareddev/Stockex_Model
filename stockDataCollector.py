@@ -19,7 +19,7 @@ class StockHandler:
 
     def getHistorical(self, symbol, start, end):
         return self.__quandl(symbol, start, end)
-
+        # return self.__bulbea(symbol,start,end)
     def __bulbea(self, symbol, start, end):
         self.__openStock(symbol)
         data = self.stock.data
@@ -35,8 +35,8 @@ class StockHandler:
     def test(self):
         print("Testing the handler with Google's stock, 2017-01-01 through 2017-01-06...")
         self.__openStock('GOOGL')
-        z = self.getHistorical('2017-01-01', '2017-01-06')
+        z = self.getHistorical('GOOGL','2017-01-01', '2017-01-06')
         pp(z)
 
-# s = StockHandler()
-# s.test()
+s = StockHandler()
+s.test()
