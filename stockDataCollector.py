@@ -38,5 +38,5 @@ class StockHandler:
         z = self.getHistorical('GOOGL','2017-01-01', '2017-01-06')
         pp(z)
 
-s = StockHandler()
-s.test()
+# s = StockHandler()
+# s.test()

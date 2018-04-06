@@ -19,6 +19,7 @@ class Server:
         self.socket.bind("tcp://127.0.0.1:" + str(port))
         self.algo = Algo()
         self.stockHandler = StockHandler()
+        self.should_shutdown = False
 
     def __try_communication(self):
         self.socket.send_string('{ Communication test : successful }')
@@ -28,13 +29,14 @@ class Server:
             while True:
                 #  Wait for next request from client
                 print("waiting for client input...")
-                message = self.socket.recv()
+                bytes = self.socket.recv()
 
                 #  Do some 'work'
                 #time.sleep(1)
 
                 #  Send reply back to client
-                self.reply(message)
+                message = bytes.decode('utf-8')
+                self.reply(json.loads(message))
                 if(self.should_shutdown):
                     raise ShutdownException("server shutdown due to controller command")
 
@@ -48,6 +50,7 @@ class Server:
 
     def reply(self, message):
         self.socket.send_json(self.handle(message))
+
     def __shouldExit(self):
         self.should_shutdown = True
 
@@ -56,6 +59,7 @@ class Server:
         self.replies[entry] = self.stockHandler.getHistorical(request["symbol"], request["start"], request["end"])  # add reply
 
     def __getRecommend(self, request, entry):
+        print("hey")
         self.replies[entry] = self.algo.getRecommend()
 
 
@@ -87,6 +91,7 @@ def test_getRecommend():
 def test_exit():
     return {"action":"exit"}
 def test(requestList):
+    print("mockup request (because we have no client to ask us for a reply)...")
     i = 0
     jsonReq = {}
     for req in requestList:
@@ -96,11 +101,10 @@ def test(requestList):
     reply = (s.handle(jsonReq))
     print("mockup reply: ")
     pprint(reply)
-##############  /TESTS  ##############
+    ##############  /TESTS  ##############
 
 s = Server(5555)
-print("mockup request (because we have no client to ask us for a reply)...")
-test([test_getHistorical(),test_getRecommend(),test_exit()])
+#test([test_getHistorical(),test_getRecommend(),test_exit()])
 s.run()
 
 
