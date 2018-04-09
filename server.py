@@ -59,11 +59,13 @@ class Server:
         self.replies[entry] = self.stockHandler.getHistorical(request["symbol"], request["start"], request["end"])  # add reply
 
     def __getRecommend(self, request, entry):
-        print("hey")
         self.replies[entry] = self.algo.getRecommend()
 
+    def __easySearch(self, request, entry):
+        self.replies[entry] = self.algo.getEasySearch(request["budget"])
 
-
+    def __advancedSearch(self, request, entry):
+        self.replies[entry] = self.algo.getAdvSearch(request["budget"], request["companyType"], request["companyName"])
 
     def handle(self, message):
         print("Got message: ")
@@ -79,6 +81,10 @@ class Server:
                 self.__getRecommend(request, entry)
             elif(comp(action, "getHistorical")):
                 self.__getHistorical(request, entry)
+            elif(comp(action, "easySearch")):
+                self.__easySearch(request, entry)
+            elif (comp(action, "advancedSearch")):
+                self.__advancedSearch(request, entry)
         return self.replies
 
 class ShutdownException(Exception): pass #define an exception for server shutdown
